@@ -120,7 +120,7 @@
   }
   .nav-links a:hover { color: var(--accent); }
 
-  /* HERO - STACKED LAYOUT */
+  /* HERO */
   #hero {
     min-height: 100vh;
     display: flex;
@@ -152,7 +152,7 @@
   .hero-name {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: clamp(40px, 8vw, 64px); /* Scaled down slightly to fix elongation */
+    font-size: clamp(40px, 8vw, 64px);
     line-height: 1.1;
     letter-spacing: -1px;
     margin-bottom: 20px;
@@ -206,7 +206,7 @@
   }
   .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
 
-  /* TERMINAL CARD - MOVED BELOW */
+  /* TERMINAL CARD */
   .terminal {
     background: var(--bg2);
     border: 1px solid var(--border);
@@ -244,7 +244,6 @@
   @keyframes blink { 50% { opacity: 0; } }
 
   /* SECTIONS */
-  /* Added scroll-margin-top so links jump to the right place without hiding under nav */
   section { padding: 100px 0; position: relative; z-index: 2; scroll-margin-top: 60px; }
 
   .section-label {
@@ -309,7 +308,6 @@
   .project-card:hover { border-color: rgba(79,195,247,0.3); transform: translateY(-4px); }
   .project-card:hover::before { transform: scaleX(1); }
   
-  /* Fixed spacing issue by changing this back to block */
   .project-card.featured { grid-column: 1 / -1; display: block; }
   .project-card.featured::before { background: var(--accent2); }
 
@@ -670,7 +668,7 @@
           <a href="https://eldoria.starscene.com" target="_blank" class="btn-ghost" style="display:inline-flex">
             Play Eldoria →
           </a>
-          <a href="https://hollowcrown.mine.bz" target="_blank" class="btn-ghost" style="display:inline-flex">
+          <a href="https://crown.starscene.com" target="_blank" class="btn-ghost" style="display:inline-flex">
             The Hollow Crown →
           </a>
         </div>
@@ -684,7 +682,7 @@
     <div class="footer-left">© 2026 CloudyRifts · LightningDew</div>
     <div class="footer-links">
       <a href="https://eldoria.starscene.com" target="_blank">Eldoria</a>
-      <a href="https://hollowcrown.mine.bz" target="_blank">Hollow Crown</a>
+      <a href="https://crown.starscene.com" target="_blank">Hollow Crown</a>
       <a href="mailto:cloudyrifts@gmail.com">Contact</a>
     </div>
   </div>
