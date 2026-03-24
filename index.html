@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CloudyRifts — LightningDew</title>
+<meta name="description" content="CloudyRifts — developer, builder, creator. Minecraft server Eldoria, Roblox game The Hollow Crown.">
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23080d1a'/><path d='M35 60 A15 15 0 0 1 50 45 A20 20 0 0 1 85 55 A15 15 0 0 1 70 80 L35 80 A20 20 0 0 1 35 60 Z' fill='%23546e8a'/><path d='M60 30 L40 60 L55 60 L45 90 L75 50 L60 50 Z' fill='%234fc3f7'/></svg>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050810;
+    --bg2: #080d1a;
+    --bg3: #0c1220;
+    --accent: #4fc3f7;
+    --accent2: #7c4dff;
+    --gold: #ffd54f;
+    --green: #69f0ae;
+    --text: #e8eaf6;
+    --muted: #546e8a;
+    --border: rgba(79,195,247,0.12);
+    --glow: 0 0 40px rgba(79,195,247,0.15);
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  #cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: width 0.15s, height 0.15s, background 0.15s;
+    mix-blend-mode: screen;
+  }
+  #cursor-ring {
+    position: fixed;
+    width: 32px; height: 32px;
+    border: 1.5px solid rgba(79,195,247,0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: all 0.08s;
+  }
+  body:has(a:hover) #cursor, body:has(button:hover) #cursor, body:has(.social-card:hover) #cursor { width:18px; height:18px; }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.6;
+  }
+
+  /* STAR FIELD */
+  #stars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* LAYOUT */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 2; }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 0;
+    background: linear-gradient(to bottom, rgba(5,8,16,0.95) 0%, transparent 100%);
+    backdrop-filter: blur(8px);
+  }
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+  }
+  .nav-logo span { color: var(--text); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO - STACKED LAYOUT */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 140px 0 80px;
+    position: relative;
+  }
+
+  .hero-content {
+    max-width: 800px;
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 32px; height: 1px;
+    background: var(--accent);
+  }
+
+  .hero-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(40px, 8vw, 64px); /* Scaled down slightly to fix elongation */
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+  }
+  .hero-name .line1 { color: var(--text); display: block; }
+  .hero-name .line2 {
+    color: transparent;
+    -webkit-text-stroke: 1.2px var(--accent2);
+    display: block;
+  }
+
+  .hero-desc {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 32px;
+    max-width: 500px;
+  }
+
+  .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 40px; }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 24px;
+    background: var(--accent);
+    color: var(--bg);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  }
+  .btn-primary:hover { background: var(--text); transform: translateY(-2px); }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* TERMINAL CARD - MOVED BELOW */
+  .terminal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--glow);
+    max-width: 600px;
+  }
+  .terminal-bar {
+    background: var(--bg3);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #ffbd2e; }
+  .dot-g { background: #28c840; }
+  .terminal-title { font-size: 11px; color: var(--muted); margin-left: 8px; letter-spacing: 0.05em; }
+  .terminal-body { padding: 24px; font-size: 13px; line-height: 2; }
+  .terminal-body .prompt { color: var(--accent2); }
+  .terminal-body .cmd { color: var(--accent); }
+  .terminal-body .out { color: var(--muted); padding-left: 16px; }
+  .terminal-body .out.green { color: var(--green); }
+  .terminal-body .out.gold { color: var(--gold); }
+  .terminal-body .cursor-blink {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: var(--accent);
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* SECTIONS */
+  /* Added scroll-margin-top so links jump to the right place without hiding under nav */
+  section { padding: 100px 0; position: relative; z-index: 2; scroll-margin-top: 60px; }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(32px, 4vw, 48px);
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+  .section-subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.7;
+    margin-bottom: 56px;
+  }
+
+  /* DIVIDER LINE */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0;
+  }
+
+  /* PROJECT CARDS */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .project-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .project-card:hover { border-color: rgba(79,195,247,0.3); transform: translateY(-4px); }
+  .project-card:hover::before { transform: scaleX(1); }
+  
+  /* Fixed spacing issue by changing this back to block */
+  .project-card.featured { grid-column: 1 / -1; display: block; }
+  .project-card.featured::before { background: var(--accent2); }
+
+  .project-tag {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .project-tag.active { border-color: var(--green); color: var(--green); }
+  .project-tag.dev { border-color: var(--gold); color: var(--gold); }
+  .project-tag.roblox { border-color: var(--accent2); color: var(--accent2); }
+
+  .project-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+  .project-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 24px;
+    max-width: 800px;
+  }
+  .project-link {
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+  }
+  .project-link svg { transition: transform 0.2s; }
+  .project-card:hover .project-link svg { transform: translateX(4px); }
+
+  /* SOCIALS */
+  .socials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+  }
+
+  .social-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    transition: all 0.2s;
+    color: inherit;
+    cursor: pointer;
+  }
+  .social-card:hover { border-color: rgba(79,195,247,0.3); background: var(--bg3); transform: translateX(4px); }
+  .social-icon {
+    width: 40px; height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .social-info { flex: 1; min-width: 0; }
+  .social-platform { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+  .social-handle { font-size: 13px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* CONTACT */
+  #contact {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .contact-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .contact-big {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.1;
+  }
+  .contact-big .highlight { color: var(--accent); }
+
+  .email-display {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .email-display span { font-size: 14px; color: var(--accent); }
+  .copy-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* FOOTER */
+  footer {
+    padding: 40px 0;
+    position: relative;
+    z-index: 2;
+  }
+  .footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer-left { font-size: 12px; color: var(--muted); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-size: 12px; color: var(--muted); text-decoration: none; }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* SCROLL ANIMATIONS */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* GLOWING LINE ACCENT */
+  .glow-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+    margin: 0;
+    opacity: 0.4;
+  }
+
+  @media (max-width: 768px) {
+    .contact-inner, .projects-grid { grid-template-columns: 1fr; gap: 40px; }
+    .socials-grid { grid-template-columns: 1fr 1fr; }
+    .hero-name { font-size: 44px; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<canvas id="stars"></canvas>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">Cloudy<span>Rifts</span></a>
+    <ul class="nav-links">
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#socials">Socials</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section id="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-eyebrow">Developer / Builder / Creator</div>
+      <h1 class="hero-name">
+        <span class="line1">CloudyRifts</span>
+        <span class="line2">LightningDew</span>
+      </h1>
+      <p class="hero-desc">
+        Building worlds — a Minecraft RPG server, a dark fantasy Roblox game, and everything in between. Always working on something.
+      </p>
+      
+      <div class="hero-btns">
+        <a href="#projects" class="btn-primary">
+          View Projects
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#socials" class="btn-ghost">Social Links</a>
+        <a href="#contact" class="btn-ghost">Get in Touch</a>
+      </div>
+
+      <div class="terminal reveal">
+        <div class="terminal-bar">
+          <div class="dot dot-r"></div>
+          <div class="dot dot-y"></div>
+          <div class="dot dot-g"></div>
+          <span class="terminal-title">cloudyrifts ~ profile.sh</span>
+        </div>
+        <div class="terminal-body">
+          <div><span class="prompt">~</span> <span class="cmd">whoami</span></div>
+          <div class="out green">CloudyRifts / LightningDew</div>
+          <div><span class="prompt">~</span> <span class="cmd">cat projects.txt</span></div>
+          <div class="out gold">▸ Eldoria — eldoria.starscene.com</div>
+          <div class="out gold">▸ The Hollow Crown — hollowcrown.mine.bz</div>
+          <div><span class="prompt">~</span> <span class="cmd">cat status.txt</span></div>
+          <div class="out green">● Both projects in active development</div>
+          <div><span class="prompt">~</span> <span class="cmd">cat links.txt</span></div>
+          <div class="out">YouTube · Discord · Spotify · Roblox</div>
+          <div><span class="prompt">~</span> <span class="cursor-blink"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+
+<section id="projects">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">What I'm Building</div>
+      <h2 class="section-title">Projects</h2>
+      <p class="section-subtitle">Two worlds in development — one in Minecraft, one in Roblox. Both dark fantasy, both built from scratch.</p>
+    </div>
+
+    <div class="projects-grid">
+
+      <div class="project-card featured reveal">
+        <span class="project-tag active">● Live / In Dev</span>
+        <div class="project-name">Eldoria</div>
+        <p class="project-desc">
+          A dark fantasy Minecraft RPG server built on EliteMobs. Explore a corrupted world, hunt elite monsters, collect gear, and climb the ranks. Features custom dungeons, boss fights, and a living economy — all set in the world of Vaelthorn.
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px">
+          <span style="font-size:10px;color:var(--muted);border:1px solid var(--border);padding:3px 8px">Minecraft</span>
+          <span style="font-size:10px;color:var(--muted);border:1px solid var(--border);padding:3px 8px">EliteMobs</span>
+          <span style="font-size:10px;color:var(--muted);border:1px solid var(--border);padding:3px 8px">RPG</span>
+          <span style="font-size:10px;color:var(--muted);border:1px solid var(--border);padding:3px 8px">Dark Fantasy</span>
+        </div>
+        <a href="https://eldoria.starscene.com" target="_blank" class="project-link">
+          Visit eldoria.starscene.com
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="project-card reveal">
+        <span class="project-tag roblox">Roblox</span>
+        <span class="project-tag dev" style="margin-left:6px">In Dev</span>
+        <div class="project-name">The Hollow Crown</div>
+        <p class="project-desc">
+          A dark pixel RPG on Roblox set in the dying world of Vaelthorn. 8 chapters, 200+ items, pixel art combat, pets, and multiple endings. The Blight spreads. The Hollow King waits.
+        </p>
+        <a href="https://hollowcrown.mine.bz" target="_blank" class="project-link">
+          hollowcrown.mine.bz
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="project-card reveal" style="opacity:0.5;border-style:dashed">
+        <span class="project-tag">Coming Soon</span>
+        <div class="project-name" style="color:var(--muted)">??? Project</div>
+        <p class="project-desc">Something new is in the works. Check back or follow on socials for updates.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="socials">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Find Me</div>
+      <h2 class="section-title">Socials</h2>
+      <p class="section-subtitle">Follow the build, watch the progress, listen along the way.</p>
+    </div>
+
+    <div class="socials-grid reveal">
+
+      <a href="https://youtube.com/lightningdew" target="_blank" class="social-card">
+        <div class="social-icon" style="background:rgba(255,0,0,0.1)">▶</div>
+        <div class="social-info">
+          <div class="social-platform">YouTube</div>
+          <div class="social-handle">LightningDew</div>
+        </div>
+      </a>
+
+      <div class="social-card" onclick="copyDiscord()">
+        <div class="social-icon" style="background:rgba(88,101,242,0.1); color:#5865F2;">💬</div>
+        <div class="social-info">
+          <div class="social-platform">Discord</div>
+          <div class="social-handle" id="discord-handle">CloudyRifts</div>
+        </div>
+      </div>
+
+      <a href="https://open.spotify.com/search/Lightning%20Dew" target="_blank" class="social-card">
+        <div class="social-icon" style="background:rgba(30,215,96,0.1)">♫</div>
+        <div class="social-info">
+          <div class="social-platform">Spotify</div>
+          <div class="social-handle">LightningDew</div>
+        </div>
+      </a>
+
+      <a href="https://www.roblox.com/users/search?keyword=LightningDew123" target="_blank" class="social-card">
+        <div class="social-icon" style="background:rgba(0,162,255,0.1)">⬡</div>
+        <div class="social-info">
+          <div class="social-platform">Roblox</div>
+          <div class="social-handle">LightningDew123</div>
+        </div>
+      </a>
+
+      <a href="mailto:cloudyrifts@gmail.com" class="social-card">
+        <div class="social-icon" style="background:rgba(79,195,247,0.1)">✉</div>
+        <div class="social-info">
+          <div class="social-platform">Email</div>
+          <div class="social-handle">cloudyrifts@gmail.com</div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="contact">
+  <div class="container">
+    <div class="contact-inner">
+      <div class="reveal">
+        <div class="section-label">Say Hello</div>
+        <div class="contact-big">Let's talk<br><span class="highlight">projects.</span></div>
+        <p style="font-size:13px;color:var(--muted);margin-top:20px;line-height:1.7">Whether it's collaboration, feedback, or just vibing — reach out anytime.</p>
+      </div>
+      <div class="reveal">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px;letter-spacing:0.1em;text-transform:uppercase">Email</div>
+        <div class="email-display">
+          <span>cloudyrifts@gmail.com</span>
+          <button class="copy-btn" onclick="copyEmail()">Copy</button>
+        </div>
+        <div style="margin-top:24px;display:flex;flex-direction:column;gap:12px">
+          <a href="https://youtube.com/lightningdew" target="_blank" class="btn-ghost" style="display:inline-flex">
+            Watch on YouTube →
+          </a>
+          <a href="https://eldoria.starscene.com" target="_blank" class="btn-ghost" style="display:inline-flex">
+            Play Eldoria →
+          </a>
+          <a href="https://hollowcrown.mine.bz" target="_blank" class="btn-ghost" style="display:inline-flex">
+            The Hollow Crown →
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">© 2026 CloudyRifts · LightningDew</div>
+    <div class="footer-links">
+      <a href="https://eldoria.starscene.com" target="_blank">Eldoria</a>
+      <a href="https://hollowcrown.mine.bz" target="_blank">Hollow Crown</a>
+      <a href="mailto:cloudyrifts@gmail.com">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+function animRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);}
+animRing();
+
+// STARS
+const canvas=document.getElementById('stars');
+const ctx=canvas.getContext('2d');
+let W,H,starArr=[];
+function initStars(){
+  W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;
+  starArr=Array.from({length:200},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()<0.7?0.6:1.2,a:Math.random(),s:0.003+Math.random()*0.008,p:Math.random()*Math.PI*2}));
+}
+function drawStars(){
+  ctx.clearRect(0,0,W,H);
+  const t=Date.now()*0.001;
+  starArr.forEach(s=>{
+    const alpha=0.15+0.6*(0.5+0.5*Math.sin(t*s.s+s.p));
+    ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,255,255,${alpha})`;ctx.fill();
+  });
+  requestAnimationFrame(drawStars);
+}
+initStars();drawStars();
+window.addEventListener('resize',initStars);
+
+// REVEAL ON SCROLL
+const revealEls=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.1});
+revealEls.forEach(el=>{obs.observe(el);});
+
+// COPY EMAIL
+function copyEmail(){
+  navigator.clipboard.writeText('cloudyrifts@gmail.com').then(()=>{
+    const btn=document.querySelector('.copy-btn');
+    btn.textContent='Copied!';btn.style.color='var(--green)';btn.style.borderColor='var(--green)';
+    setTimeout(()=>{btn.textContent='Copy';btn.style.color='';btn.style.borderColor='';},2000);
+  });
+}
+
+// COPY DISCORD
+function copyDiscord(){
+  navigator.clipboard.writeText('CloudyRifts').then(()=>{
+    const handle=document.getElementById('discord-handle');
+    const original=handle.textContent;
+    handle.textContent='Copied!';
+    handle.style.color='var(--green)';
+    setTimeout(()=>{handle.textContent=original;handle.style.color='';},2000);
+  });
+}
+</script>
+</body>
+</html>
